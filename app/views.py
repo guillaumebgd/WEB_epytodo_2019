@@ -1,71 +1,92 @@
+# -*- coding: Utf-8 -*
 ##
 ## EPITECH PROJECT, 2019
-## WEB_epytodo_2019
+## Epytodo 2019
 ## File description:
-## views.py
+## Views part of MVC Architecture -> What's beeing seen by the user
 ##
 
-import json
-from flask import Flask, render_template, redirect, request, url_for, request, logging, flash
+from flask import Flask, render_template, redirect, url_for, request, logging, flash, session
 import pymysql as sql
 
 from app import *
 from app.controller import *
-from app.models import *
-
-connection = Connection()
-
-#@app.route('/user', methods=['GET'])
-#@app.route('/user/task', methods=['GET'])
-#@app.route('/user/task/id', methods=['GET'])
-#@app.route('/user/task/id', methods=['POST'])
-#@app.route('/user/task/add', methods=['POST'])
-#@app.route('/user/task/del/id', methods=['POST'])
 
 @app.route('/', methods=['GET'])
 def route_home():
     page = request.args.get("page", "home.html")
-    return render_template(page, username=session['username'])
+    if "username" in session:
+        return render_template(page, username=session["username"])
+    return render_template(page, username=None)
 
 @app.route('/register', methods=['POST'])
 def route_register():
-    auth = Authentification(app, connection)
-    json_page, username, password = auth.register(connection, request)
-    json_dictionnary = json.loads(json_page)
-    if "error" in json_dictionnary:
-        flash(json_dictionnary['error'].capitalize() + ".", "danger")
-    elif "result" in json_dictionnary:
-        flash(json_dictionnary['result'].capitalize() + ".", "success")
-        session['username'] = username
-        session['id'] = get_user_id(connection.cursor, username)
+    auth = Authentification()
+    if auth.register(request) is False:
+        page = request.args.get("page", "register.html")
+        if "username" in session:
+            return render_template(page, username=session["username"])
+        return render_template(page, username=None)
     return route_home()
 
 @app.route('/signin', methods=['POST'])
 def route_signin():
-    auth = Authentification(app, connection)
-    json_page, username, password = auth.signin(connection, request)
-    json_dictionnary = json.loads(json_page)
-    if "error" in json_dictionnary:
-        flash(json_dictionnary['error'].capitalize() + ".", "danger")
-    elif "result" in json_dictionnary:
-        flash(json_dictionnary['result'].capitalize() + ".", "success")
-        session['username'] = username
-        session['id'] = get_user_id(connection.cursor, username)
+    auth = Authentification()
+    if auth.signin(request) is False:
+        page = request.args.get("page", "signin.html")
+        if "username" in session:
+            return render_template(page, username=session["username"])
+        return render_template(page, username=None)
     return route_home()
 
 @app.route('/signout', methods=['POST'])
 def route_signout():
-    auth = Authentification(app, connection)
-    json_page = auth.signout(request)
-    json_dictionnary = json.loads(json_page)
-    if "error" in json_dictionnary:
-        flash(json_dictionnary['error'].capitalize() + ".", "danger")
-    elif "result" in json_dictionnary:
-        flash(json_dictionnary['result'].capitalize() + ".", "success")
-        session['username'] = None
-        session['id'] = None
+    auth = Authentification()
+    if auth.signout(request) is False:
+        page = request.args.get("page", "signout.html")
+        if "username" in session:
+            return render_template(page, username=session["username"])
+        return render_template(page, username=None)
     return route_home()
 
-@app.route('/user/<username>', methods=['POST'])
-def route_user(username):
+@app.route('/user', methods=['GET'])
+def route_user():
+    usercontrol = User_controller()
+    user_infos = usercontrol.view_user_info()
+    if user_infos is None:
+        return route_home()
+    return render_template("user_board.html", username=session['username'],
+                                                tasks_count=user_infos[0],
+                                                tasks_in_pr=user_infos[1],
+                                                tasks_done=user_infos[2],
+                                                tasks_wait=user_infos[3])
+
+@app.route('/user/task', methods=['GET'])
+def route_user_task():
+    usercontrol = User_controller()
+    tasks = usercontrol.view_user_tasks()
+    if tasks is None:
+        return route_home()
+    return render_template("user_tasks.html", task_list=tasks)
+
+@app.route('/user/task/<int:task_id>', methods=['GET'])
+def route_user_specific_task(task_id):
     pass
+
+@app.route('/user/task/<int:task_id>', methods=['POST'])
+def route_update_task(task_id):
+    pass
+
+@app.route('/user/task/add', methods=['POST'])
+def route_create_task():
+    usercontrol = User_controller()
+    if usercontrol.create_user_task() is False:
+        return route_home()
+    return route_user_task()
+
+@app.route('/user/task/del/<int:task_id>', methods=['POST'])
+def route_delete_task(task_id):
+    usercontrol = User_controller()
+    if usercontrol.delete_user_task(task_id) is False:
+        return route_home()
+    return route_user_task()

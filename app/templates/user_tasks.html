@@ -1,0 +1,36 @@
+{% extends "layout.html"%}
+{% block body%}
+<table>
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">+</th>
+            <th scope="col">Title</th>
+            <th scope="col">Beginning</th>
+            <th scope="col">Ending</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in task_list %}
+        <tr>
+            <th scope="row">{{ task[0] }}</th>
+            <td><a href="{{ url_for('route_user_specific_task', task_id=task[0] )}}" title="Task details">{{ task[1] }}</a></td>
+            <td>{{ task[2] }}</td>
+            <td>{{ task[3] }}</td>
+            <td>{{ task[4] }}</td>
+            <td align="center">
+                <span class="badge badge-success"><i class="fa fa-check"></i></span>
+                <span class="badge badge-info"><i class="fa fa-pencil-alt"></i></span>
+                <a href="{{ url_for('route_delete_task', task_id=task[0]) }}" onclick="event.preventDefault(); document.getElementById('delete-task-form-{{ task[0] }}').submit();" data-toggle="tooltip" data-placement="top" title="Delete task #{{ task[0] }}"><span class="badge badge-danger"><i class="fa fa-trash"></i></span></a>
+                <form id="delete-task-form-{{ task[0] }}" action="{{ url_for('route_delete_task', task_id=task[0]) }}" method="post" style="display:none"></form>
+            </td>
+        {% endfor %}
+        </tr>
+    </tbody>
+</table>
+<form action="/user/task/add" method="POST">
+    <div class="form-group">
+        <button type="submit" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create a new task</button>
+    </div>
+</form>
+{% endblock %}
