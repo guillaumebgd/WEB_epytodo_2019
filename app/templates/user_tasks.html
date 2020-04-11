@@ -1,7 +1,44 @@
 {% extends "layout.html"%}
 {% block body%}
+
+<style>
+    .content_table {
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.9em;
+        min-width: 400px;
+        border-radius: 5px 5px 0 0;
+        overflow: hidden;
+        box-shadow: 0 0 20px grey;
+    }
+
+    .content_table thead tr {
+        background-color: indigo;
+        color: hotpink;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .content_table th,
+    .content_table td {
+        padding: 12px 15px;
+    }
+
+    .content_table tbody tr {
+        border-bottom: 1px solid grey;
+    }
+
+    .content_table tbody tr:nth-of-type(even) {
+        background-color: lightgrey;
+    }
+
+    .content_table  tbody tr:last-of-type {
+        border-bottom: 2px solid indigo;
+    }
+</style>
+
 <table>
-    <thead class="thead-dark">
+    <thead class="content_table">
         <tr>
             <th scope="col">+</th>
             <th scope="col">Title</th>
