@@ -1,20 +1,56 @@
 {% extends "layout.html"%}
 {% block body%}
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+.create_button {
+        margin-left: 25px;
+        margin-top: 5px;
+        margin-right: 25px;
+        text-align: center;
+        color: whitesmoke;
+        font-size: 16px;
+        text-transform: uppercase;
+        text-decoration: none;
+        font-family: sans-serif;
+        box-sizing: border-box;
+        background: linear-gradient(90deg, #009000, #00B800, #00F000,#00B800, #009000);
+        background-size: 300%;
+        border-radius: 5px;
+    }
+
+    .create_button:hover {
+        animation: animate 8s linear infinite;
+    }
+
+    @keyframes animate {
+        0%
+        {
+            background-position: 0%;
+        }
+        100%
+        {
+            background-position: 300%;
+        }
+    }
+</style>
+{% if task_count > 0 %}
 <style>
     .content_table {
         border-collapse: collapse;
-        margin: 25px 0;
+        margin-left: 25px;
+        margin-right: 25px;
+        margin-bottom: 50px;
+        margin-top: 10px;
         font-size: 0.9em;
         min-width: 400px;
-        border-radius: 5px 5px 0 0;
+        border-radius: 15px 15px 0 0;
         overflow: hidden;
-        box-shadow: 0 0 20px grey;
     }
 
     .content_table thead tr {
-        background-color: indigo;
-        color: hotpink;
+        background-color: black;
+        color: whitesmoke;
         text-align: left;
         font-weight: bold;
     }
@@ -25,49 +61,50 @@
     }
 
     .content_table tbody tr {
-        border-bottom: 1px solid grey;
+        border-left: 1px solid black;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
     }
 
-    .content_table tbody tr:nth-of-type(even) {
-        background-color: lightgrey;
+    .content_table tbody td:last-child {
+        border-left: 1px solid grey;
     }
 
-    .content_table  tbody tr:last-of-type {
-        border-bottom: 2px solid indigo;
+    .content_table tbody tr:last-of-type {
+        border-bottom: 2px solid black;
     }
 </style>
-
-<table>
-    <thead class="content_table">
+<!-- <link rel="stylesheet" type="text/css" href="../static/css/user_tasks.css"> -->
+<table class="content_table">
+    <thead>
         <tr>
-            <th scope="col">+</th>
             <th scope="col">Title</th>
             <th scope="col">Beginning</th>
             <th scope="col">Ending</th>
             <th scope="col">Status</th>
+            <th scope="col"></th>
         </tr>
     </thead>
     <tbody>
         {% for task in task_list %}
         <tr>
-            <th scope="row">{{ task[0] }}</th>
             <td><a href="{{ url_for('route_user_specific_task', task_id=task[0] )}}" title="Task details">{{ task[1] }}</a></td>
             <td>{{ task[2] }}</td>
             <td>{{ task[3] }}</td>
             <td>{{ task[4] }}</td>
             <td align="center">
-                <span class="badge badge-success"><i class="fa fa-check"></i></span>
-                <span class="badge badge-info"><i class="fa fa-pencil-alt"></i></span>
-                <a href="{{ url_for('route_delete_task', task_id=task[0]) }}" onclick="event.preventDefault(); document.getElementById('delete-task-form-{{ task[0] }}').submit();" data-toggle="tooltip" data-placement="top" title="Delete task #{{ task[0] }}"><span class="badge badge-danger"><i class="fa fa-trash"></i></span></a>
+                <a href="{{ url_for('route_update_task', task_id=task[0]) }}"data-placement="top" title="Update task"><i class="fa fa-gear" syle="font-size:36px;color:red"></i></a>
+                <a href="{{ url_for('route_delete_task', task_id=task[0]) }}" onclick="event.preventDefault(); document.getElementById('delete-task-form-{{ task[0] }}').submit();" data-toggle="tooltip" data-placement="top" title="Delete task"><i class="fa fa-close" syle="font-size:36px;color:red"></i></a>
                 <form id="delete-task-form-{{ task[0] }}" action="{{ url_for('route_delete_task', task_id=task[0]) }}" method="post" style="display:none"></form>
             </td>
         {% endfor %}
         </tr>
     </tbody>
 </table>
+{% endif %}
 <form action="/user/task/add" method="POST">
-    <div class="form-group">
-        <button type="submit" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;Create a new task</button>
+        <div class="form-group">
+        <button type="submit" class="create_button"><i class="fa fa-plus"></i>&nbsp;Create a new task</button>
     </div>
 </form>
 {% endblock %}

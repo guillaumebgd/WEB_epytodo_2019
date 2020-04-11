@@ -21,10 +21,10 @@ class Connection(object):
 
     def connector(self, config):
         try:
-            self.sql_connection = sql.connect(host=config["DATABASE_HOST"],
-                                            user=config["DATABASE_USER"],
-                                            passwd=config["DATABASE_PASS"],
-                                            db=config["DATABASE_NAME"])
+            self.sql_connection = sql.connect(host=config['DATABASE_HOST'],
+                                            user=config['DATABASE_USER'],
+                                            passwd=config['DATABASE_PASS'],
+                                            db=config['DATABASE_NAME'])
             if self.sql_connection == None:
                 raise Exception
         except Exception as e:
@@ -139,7 +139,7 @@ class Task(object):
 
     def add_default_task_to_user_id(self, user_id):
         try:
-            self.cursor.execute("INSERT INTO task (title) VALUES ('Add a description of your task here.')")
+            self.cursor.execute("INSERT INTO task (title) VALUES ('Add a description for your task here.')")
             task_id = self.cursor.lastrowid
             self.cursor.execute("INSERT INTO user_has_task (fk_user_id, fk_task_id) VALUES ('%d', '%d')" % (user_id[0], task_id))
             self.sql_connection.commit()
@@ -148,13 +148,14 @@ class Task(object):
             print(e)
         return False
 
-    def update_task(self, user_id, task_id, title, begin, end, status):
+    def update_task(self, task_id, title, begin, end, status):
         try:
-            self.cursor.execute("INSERT INTO '%d' FROM task (title, begin, end, status) VALUES ('%s', '%s', '%s', '%d')" % (title, begin, end, status))
+            self.cursor.execute("UPDATE task SET title = '%s', begin = '%s', end = '%s', status = '%d' WHERE task_id = '%d'" % (title, begin, end, int(status), task_id))
             self.sql_connection.commit()
+            return True
         except Exception as e:
             print(e)
-        return -1
+        return False
 
     def delete_task(self, user_id, task_id):
         try:

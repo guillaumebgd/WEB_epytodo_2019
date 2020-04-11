@@ -1,0 +1,74 @@
+{% extends "layout.html"%}
+{% block body%}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+    .content_table {
+        border-collapse: collapse;
+        margin-left: 25px;
+        margin-right: 25px;
+        margin-bottom: 50px;
+        font-size: 0.9em;
+        min-width: 400px;
+        border-radius: 15px 15px 0 0;
+        overflow: hidden;
+    }
+
+    .content_table thead tr {
+        background-color: black;
+        color: whitesmoke;
+        text-align: left;
+        font-weight: bold;
+    }
+
+    .content_table th,
+    .content_table td {
+        padding: 12px 15px;
+    }
+
+    .content_table tbody tr {
+        border-left: 1px solid black;
+        border-bottom: 1px solid black;
+        border-right: 1px solid black;
+    }
+
+    .content_table tbody td:last-child {
+        border-left: 1px solid grey;
+    }
+
+    .content_table tbody tr:last-of-type {
+        border-bottom: 2px solid black;
+    }
+</style>
+
+<!-- <link rel="stylesheet" type="text/css" href="../static/css/user_tasks.css"> -->
+<table class="content_table">
+    <thead>
+        <tr>
+            <th scope="col">View task</th>
+            <th scope="col">Title</th>
+            <th scope="col">Beginning</th>
+            <th scope="col">Ending</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        <form action="/user/task/{{ task[0] }}" method="POST">
+            <td></td>
+            <td><input type="text" name="Title" class="form-control" placeholder="{{ task[1] }}" required></td>
+            <td><input type="datetime-local" name="Begin" class="form-control" placeholder="{{ task[2]}}" required></td>
+            <td><input type="datetime-local" name="End" class="form-control" placeholder="{{ task[3]}}" required></td>
+            <td>
+                <input type="radio" name="Status" value=0><span class="badge badge-info">In progress</span>
+                <input type="radio" name="Status" value=1><span class="badge badge-info">Done</span>
+                <input type="radio" name="Status" value=2><span class="badge badge-info">Not started</span>
+            </td>
+            <td><button class="btn btn-primary" type="enter">Modify task</button></td>
+        </form>
+    </tr>
+    </tbody>
+</table>
+{% endblock %}

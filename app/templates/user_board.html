@@ -1,19 +1,20 @@
 {% extends "layout.html"%}
 {% block body%}
-<section id="services" class="bg-light">
+
+<section id="services" class="white">
     <div class="container">
         <div class="row">
             <div class="col-md-4">
                 <div class="panel panel-default">
-                    <div class="panel-footer">
-                        Amount of tasks:<span style="float: right" class="badge badge-info">{{ tasks_count }}</span><br />
-                        Amount of tasks not yet started:<span style="float: right" class="badge badge-danger">{{ tasks_wait }}</span><br />
-                        Amount of tasks in progress:<span style="float: right" class="badge badge-warning">{{ tasks_in_pr }}</span><br />
-                        Amount of finished tasks:<span style="float: right" class="badge badge-success">{{ tasks_done }}</span><br />
+                    <div class="panel-footer" style="margin-top: 10px;">
+                        Amount of tasks in total:<span style="float: right; margin-top: 5px;" class="badge badge-info">{{ tasks_count }}</span><br />
+                        Amount of tasks not yet started:<span style="float: right; margin-top: 5px;" class="badge badge-danger">{{ tasks_wait }}</span><br />
+                        Amount of tasks in progress:<span style="float: right; margin-top: 5px;" class="badge badge-warning">{{ tasks_in_pr }}</span><br />
+                        Amount of tasks done:<span style="float: right; margin-top: 5px;" class="badge badge-success">{{ tasks_done }}</span><br />
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8" style="margin-top: 15px;">
                 <h2>Hello <b>{{ username }}</b>,</h2>
                 <p class="lead">
                     Welcome to your personal taskboard !<br />
@@ -23,17 +24,17 @@
                 <hr />
                 <h3>Tasks progression</h3>
                 <br />
-                <div class="progress" style="height: 20px;margin-bottom:10px;">
+                <div class="progress" style="height: 20px; margin-bottom:10px;">
                     {% set progression = (100 * tasks_wait) / tasks_count %}
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: {{ progression }}%" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100"><b>{{ progression|int }}% des tâches en attente</b></div>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-danger" role="progressbar" style="width: {{ progression }}%" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100"><b>{{ progression|int }}% of not started tasks</b></div>
                 </div>
-                <div class="progress" style="height: 20px;margin-bottom:10px;">
+                <div class="progress" style="height: 20px; margin-bottom:10px;">
                     {% set progression = (100 * tasks_in_pr) / tasks_count %}
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: {{ progression }}%" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100"><b>{{ progression|int }}% des tâches en cours</b></div>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-warning" role="progressbar" style="width: {{ progression }}%" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100"><b>{{ progression|int }}% of tasks in progress</b></div>
                 </div>
                 <div class="progress" style="height: 20px;">
                     {% set progression = (100 * tasks_done) / tasks_count %}
-                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ progression }}%" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100"><b>{{ progression|int }}% des tâches terminées</b></div>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: {{ progression }}%" aria-valuenow="{{ progression }}" aria-valuemin="0" aria-valuemax="100"><b>{{ progression|int }}% of tasks done</b></div>
                 </div>
                 {% endif %}
             </div>
