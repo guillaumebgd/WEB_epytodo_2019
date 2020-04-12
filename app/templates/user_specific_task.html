@@ -62,9 +62,9 @@
             <td><input type="datetime-local" name="Begin" class="form-control" placeholder="{{ task[2]}}" required></td>
             <td><input type="datetime-local" name="End" class="form-control" placeholder="{{ task[3]}}" required></td>
             <td>
-                <input type="radio" name="Status" value=0><span class="badge badge-info">In progress</span>
-                <input type="radio" name="Status" value=1><span class="badge badge-info">Done</span>
-                <input type="radio" name="Status" value=2><span class="badge badge-info">Not started</span>
+                <input type="radio" name="Status" value=0><i class="fa fa-clock" style="color:orange;">In progress</i>
+                <input type="radio" name="Status" value=1><i class="fa fa-check-circle" style="color:green;">Done</i>
+                <input type="radio" name="Status" value=2><i class="fa fa-times-circle" style="color:red;">Not started</i>
             </td>
             <td><button class="btn btn-primary" type="enter">Modify task</button></td>
         </form>

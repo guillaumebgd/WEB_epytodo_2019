@@ -91,9 +91,16 @@
             <td><a href="{{ url_for('route_user_specific_task', task_id=task[0] )}}" title="Task details">{{ task[1] }}</a></td>
             <td>{{ task[2] }}</td>
             <td>{{ task[3] }}</td>
-            <td>{{ task[4] }}</td>
+            <td>
+                {% if task[4] == 0 %}
+                    <i class="fa fa-clock" style="color:orange;">In progress</i>
+                {% elif task[4] == 1 %}
+                    <i class="fa fa-check-circle" style="color:green;">Done</i>
+                {% elif task[4] == 2 %}
+                    <i class="fa fa-times-circle" style="color:red;">Not started</i>
+            </td>
             <td align="center">
-                <a href="{{ url_for('route_update_task', task_id=task[0]) }}"data-placement="top" title="Update task"><i class="fa fa-gear" syle="font-size:36px;color:red"></i></a>
+                <a href="{{ url_for('route_update_task', task_id=task[0]) }}"data-placement="top" title="Update task"><i class="fa fa-gear" syle="font-size:36px;color:green;"></i></a>
                 <a href="{{ url_for('route_delete_task', task_id=task[0]) }}" onclick="event.preventDefault(); document.getElementById('delete-task-form-{{ task[0] }}').submit();" data-toggle="tooltip" data-placement="top" title="Delete task"><i class="fa fa-close" syle="font-size:36px;color:red"></i></a>
                 <form id="delete-task-form-{{ task[0] }}" action="{{ url_for('route_delete_task', task_id=task[0]) }}" method="post" style="display:none"></form>
             </td>
