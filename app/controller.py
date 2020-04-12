@@ -8,7 +8,6 @@
 
 from flask import json, flash, session, render_template
 from datetime import datetime
-
 from app import *
 from app.models import *
 
@@ -20,13 +19,14 @@ class Authentification(object):
 
     def register(self, request):
         request_result = {}
+
         username = request.form['username']
         password = request.form['password']
         confirm_password = request.form['confirm_password']
-        if password != confirm_password:
-            request_result['error'] = "password doesn't match"
-        elif self.user.is_username_in_user_table(username) is True:
+        if self.user.is_username_in_user_table(username) is True:
             request_result['error'] = "account already exists"
+        elif password != confirm_password:
+            request_result['error'] = "password doesn't match"
         else:
             if self.user.create_new_user(username, password) is True:
                 request_result['result'] = "account created"
@@ -43,12 +43,14 @@ class Authentification(object):
 
     def signin(self, request):
         request_result = {}
+
         if 'username' in session:
             request_result['error'] = "internal error"
         else:
             username = request.form['username']
             password = request.form['password']
-            if self.user.is_username_in_user_table(username) is True and password == self.user.get_user_password(username):
+            if (self.user.is_username_in_user_table(username) is True
+                and password == self.user.get_user_password(username)):
                 request_result['result'] = "signin successful"
             else:
                 request_result['error'] = "login or password does not match"
@@ -63,6 +65,7 @@ class Authentification(object):
 
     def signout(self):
         request_result = {}
+
         if 'username' not in session:
             request_result['error'] = "you must be logged in"
         else:
@@ -84,6 +87,7 @@ class User_controller(object):
 
     def view_user_info(self):
         request_result = {}
+
         if 'id' not in session:
             request_result['error'] = "you must be logged in"
         else:
@@ -98,6 +102,7 @@ class User_controller(object):
 
     def view_user_specific_task(self, task_id):
         request_result = {}
+
         if 'id' not in session:
             request_result['error'] = "you must be logged in"
         else:
@@ -115,6 +120,7 @@ class User_controller(object):
 
     def view_user_tasks(self):
         request_result = {}
+
         if 'id' not in session:
             request_result['error'] = "you must be logged in"
         else:
@@ -129,6 +135,7 @@ class User_controller(object):
 
     def delete_user_task(self, task_id):
         request_result = {}
+
         if 'id' not in session:
             request_result['error'] = "you must be logged in"
         else:
@@ -146,6 +153,7 @@ class User_controller(object):
 
     def create_user_task(self):
         request_result = {}
+
         if 'id' not in session:
             request_result['error'] = "you must be logged in"
         else:
@@ -161,6 +169,7 @@ class User_controller(object):
 
     def update_user_task(self, task_id):
         request_result = {}
+
         if 'id' not in session:
             request_result['error'] = "you must be logged in"
         else:
@@ -172,7 +181,8 @@ class User_controller(object):
             datetime.strptime(begin, got_format).strftime(sql_format)
             datetime.strptime(end, got_format).strftime(sql_format)
             status = request.form['Status']
-            if self.tasks.update_task(task_id, title, begin, end, status) is True:
+            if (self.tasks.update_task(task_id, title, begin, end, status)
+                is True):
                 request_result['result'] = "update done"
             else:
                 request_result['error'] = "internal error"
@@ -186,6 +196,7 @@ def get_tasks_counting_info(tasks):
     wait_count = 0
     prog_count = 0
     done_count = 0
+
     for task in tasks:
         if len(task) < 5:
             continue

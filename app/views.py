@@ -6,9 +6,9 @@
 ## Views part of MVC Architecture -> What's beeing seen by the user
 ##
 
-from flask import Flask, render_template, redirect, request, flash, session, json
+from flask import Flask, render_template
+from flask import redirect, request, flash, session, json
 import pymysql as sql
-
 from app import *
 from app.controller import *
 

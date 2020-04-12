@@ -8,7 +8,6 @@
 
 import sys
 import pymysql as sql
-
 from app import app
 
 class Connection(object):
@@ -21,10 +20,16 @@ class Connection(object):
 
     def connector(self, config):
         try:
-            self.sql_connection = sql.connect(host=config['DATABASE_HOST'],
+            if 'DATABASE_SOCK' in config and config['DATABASE_SOCK'] != None:
+                self.sql_connection = sql.connect(host=config['DATABASE_SOCK'],
                                             user=config['DATABASE_USER'],
                                             passwd=config['DATABASE_PASS'],
                                             db=config['DATABASE_NAME'])
+            else:
+                self.sql_connection = sql.connect(host=config['DATABASE_HOST'],
+                                                user=config['DATABASE_USER'],
+                                                passwd=config['DATABASE_PASS'],
+                                                db=config['DATABASE_NAME'])
             if self.sql_connection == None:
                 raise Exception
         except Exception as e:
@@ -55,7 +60,9 @@ class User(object):
 
     def is_username_in_user_table(self, username):
         try:
-            self.cursor.execute("SELECT COUNT(1) FROM user WHERE username = '%s'" % (username))
+            self.cursor.execute("SELECT COUNT(1) "
+                                "FROM user WHERE username = '%s'"
+                                % (username))
             exists = self.cursor.fetchone()[0]
             if exists == 1:
                 return True
@@ -65,13 +72,17 @@ class User(object):
         return True
 
     def create_new_user(self, username, password):
-        self.cursor.execute("INSERT INTO user (username, password) VALUES ('%s', '%s')" % (username, password))
+        self.cursor.execute("INSERT INTO user "
+                            "(username, password) VALUES ('%s', '%s')"
+                            % (username, password))
         self.sql_connection.commit()
         return True
 
     def get_user_password(self, username):
         try:
-            self.cursor.execute("SELECT password FROM user WHERE username = '%s'" % (username))
+            self.cursor.execute("SELECT password "
+                                "FROM user WHERE username = '%s'"
+                                % (username))
             user_password = self.cursor.fetchone()[0]
             return user_password
         except Exception as e:
@@ -80,7 +91,9 @@ class User(object):
 
     def get_user_id(self, username):
         try:
-            self.cursor.execute("SELECT user_id FROM user WHERE username = '%s'" % (username))
+            self.cursor.execute("SELECT user_id "
+                                "FROM user WHERE username = '%s'"
+                                % (username))
             user_id = self.cursor.fetchone()
             return user_id
         except Exception as e:
@@ -96,12 +109,16 @@ class Task(object):
 
     def get_tasks_with_user_id(self, user_id):
         user_task_list = []
+
         try:
-            self.cursor.execute("SELECT fk_task_id FROM user_has_task WHERE fk_user_id = '%d'" % (user_id))
+            self.cursor.execute("SELECT fk_task_id "
+                                "FROM user_has_task WHERE fk_user_id = '%d'"
+                                % (user_id))
             list_ids = list(self.cursor.fetchall())
             for id in list_ids:
                 self.cursor = self.sql_connection.cursor()
-                self.cursor.execute("SELECT * FROM task WHERE task_id = '%d'" % (id[0]))
+                self.cursor.execute("SELECT * FROM task WHERE task_id = '%d'"
+                                    % (id[0]))
                 user_task_list.append(list(self.cursor.fetchall()[0]))
             return user_task_list
         except Exception as e:
@@ -110,7 +127,8 @@ class Task(object):
 
     def get_task_with_task_id(self, task_id):
         try:
-            self.cursor.execute("SELECT * FROM task WHERE task_id ='%d'" % (task_id))
+            self.cursor.execute("SELECT * FROM task WHERE task_id ='%d'"
+                                % (task_id))
             task = list(self.cursor.fetchall())
             return task
         except Exception as e:
@@ -119,7 +137,9 @@ class Task(object):
 
     def is_task_to_user(self, user_id, task_id):
         try:
-            self.cursor.execute("SELECT * FROM user_has_task WHERE fk_user_id = '%d' AND fk_task_id = '%d'" % (user_id, task_id))
+            self.cursor.execute("SELECT * FROM user_has_task "
+                                "WHERE fk_user_id = '%d' AND fk_task_id = '%d'"
+                                % (user_id, task_id))
             exists = self.cursor.fetchone()[0]
             if exists == 1:
                 return True
@@ -130,7 +150,9 @@ class Task(object):
 
     def is_task_in_task_table(self, task_id):
         try:
-            self.cursor.execute("SELECT * FROM user_has_task WHERE fk_task_id = '%d'" % (task_id))
+            self.cursor.execute("SELECT * FROM user_has_task "
+                                "WHERE fk_task_id = '%d'"
+                                % (task_id))
             exists = self.cursor.fetchone()[0]
             return True
         except Exception as e:
@@ -139,9 +161,12 @@ class Task(object):
 
     def add_default_task_to_user_id(self, user_id):
         try:
-            self.cursor.execute("INSERT INTO task (title) VALUES ('Add a description for your task here.')")
+            self.cursor.execute("INSERT INTO task (title) "
+                                "VALUES ('Add a description here.')")
             task_id = self.cursor.lastrowid
-            self.cursor.execute("INSERT INTO user_has_task (fk_user_id, fk_task_id) VALUES ('%d', '%d')" % (user_id[0], task_id))
+            self.cursor.execute("INSERT INTO user_has_task "
+                                "(fk_user_id, fk_task_id) VALUES ('%d', '%d')"
+                                % (user_id[0], task_id))
             self.sql_connection.commit()
             return True
         except Exception as e:
@@ -150,7 +175,10 @@ class Task(object):
 
     def update_task(self, task_id, title, begin, end, status):
         try:
-            self.cursor.execute("UPDATE task SET title = '%s', begin = '%s', end = '%s', status = '%d' WHERE task_id = '%d'" % (title, begin, end, int(status), task_id))
+            self.cursor.execute("UPDATE task SET title = '%s', begin = '%s', "
+                                "end = '%s', status = '%d' "
+                                "WHERE task_id = '%d'"
+                                % (title, begin, end, int(status), task_id))
             self.sql_connection.commit()
             return True
         except Exception as e:
@@ -159,12 +187,17 @@ class Task(object):
 
     def delete_task(self, user_id, task_id):
         try:
-            self.cursor.execute("SELECT COUNT(1) FROM user_has_task WHERE fk_user_id = '%d' AND fk_task_id = '%d'" % (user_id[0], task_id))
+            self.cursor.execute("SELECT COUNT(1) FROM user_has_task "
+                                "WHERE fk_user_id = '%d' AND fk_task_id = '%d'"
+                                % (user_id[0], task_id))
             res = self.cursor.fetchone()[0]
             if res != 1:
                 return False
-            self.cursor.execute("DELETE FROM user_has_task WHERE fk_user_id = '%d' AND fk_task_id = '%d'" % (user_id[0], task_id))
-            self.cursor.execute("DELETE FROM task WHERE task_id = '%d'" % (task_id))
+            self.cursor.execute("DELETE FROM user_has_task "
+                                "WHERE fk_user_id = '%d' AND fk_task_id = '%d'"
+                                % (user_id[0], task_id))
+            self.cursor.execute("DELETE FROM task WHERE task_id = '%d'"
+                                % (task_id))
             self.sql_connection.commit()
             return True
         except Exception as e:
