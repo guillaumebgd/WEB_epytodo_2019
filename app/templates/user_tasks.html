@@ -98,6 +98,7 @@
                     <i class="fa fa-check-circle" style="color:green;">Done</i>
                 {% elif task[4] == 2 %}
                     <i class="fa fa-times-circle" style="color:red;">Not started</i>
+                {% endif %}
             </td>
             <td align="center">
                 <a href="{{ url_for('route_update_task', task_id=task[0]) }}"data-placement="top" title="Update task"><i class="fa fa-gear" syle="font-size:36px;color:green;"></i></a>
